@@ -1,0 +1,302 @@
+/* Base Styles */
+.shopify-reviews-widget {
+    font-family: sans-serif;
+    color: #2e2e2e;
+    background-color: transparent;
+    padding: 20px 0;
+    overflow: hidden; /* For slider */
+}
+
+.widget-title {
+    text-align: center;
+    font-size: 2.5em;
+    color: #b0b0b0; /* Lighter grey for title */
+    margin-bottom: 40px;
+}
+
+/* Reviews Carousel */
+.reviews-carousel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px; /* Max width for the carousel */
+    margin: 0 auto;
+    padding: 0 50px; /* Space for arrows */
+    box-sizing: border-box;
+}
+
+.reviews-container {
+    display: flex;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    scroll-snap-type: x mandatory; /* Snap to individual cards */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+    -ms-overflow-style: none; /* Hide scrollbar for IE/Edge */
+    padding-bottom: 10px; /* Space for potential scrollbar that's hidden */
+    gap: 20px; /* Space between review cards */
+}
+
+.reviews-container::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome, Safari, Opera */
+}
+
+/* Slider Arrows */
+.slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.5em;
+    color: #2e2e2e;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.slider-arrow:hover {
+    background-color: #574b90;
+    color: #ffffff;
+}
+
+.left-arrow {
+    left: 10px;
+}
+
+.right-arrow {
+    right: 10px;
+}
+
+/* Review Card */
+.review-card {
+    flex: 0 0 auto; /* Prevent cards from shrinking */
+    width: 280px; /* Fixed width for cards */
+    background-color: #eeeeee;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    scroll-snap-align: start;
+}
+
+.reviewer-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.reviewer-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.reviewer-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.reviewer-name {
+    font-weight: bold;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+}
+
+.verified-icon {
+    margin-left: 5px;
+    color: #574b90;
+    font-size: 0.9em;
+}
+
+.review-date {
+    font-size: 0.9em;
+    color: #777;
+}
+
+.rating-stars {
+    margin-bottom: 15px;
+}
+
+.rating-stars .star {
+    color: #e7721b;
+    font-size: 1.2em;
+}
+
+.review-content {
+    font-size: 0.95em;
+    line-height: 1.5;
+    flex-grow: 1; /* Allow content to take available space */
+}
+
+.review-content-full {
+    display: none; /* Hidden by default */
+}
+
+.read-more-btn {
+    color: #574b90;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    display: inline-block; /* Ensure it takes its own line below the content */
+}
+
+/* Review Popup */
+.review-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    visibility: hidden; /* Hidden by default */
+    opacity: 0;
+    transition: visibility 0.3s, opacity 0.3s;
+}
+
+.review-popup-overlay.visible {
+    visibility: visible;
+    opacity: 1;
+}
+
+.review-popup {
+    background-color: #eeeeee;
+    padding: 30px;
+    border-radius: 8px;
+    position: relative;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    color: #2e2e2e;
+}
+
+.popup-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2em;
+    cursor: pointer;
+    color: #777;
+    transition: color 0.2s ease;
+}
+
+.popup-close-btn:hover {
+    color: #2e2e2e;
+}
+
+.popup-content .reviewer-info {
+    margin-bottom: 20px;
+}
+
+.popup-content .rating-stars {
+    margin-bottom: 20px;
+}
+
+.popup-content .full-review-text {
+    line-height: 1.6;
+    font-size: 1em;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .reviews-carousel {
+        padding: 0 20px;
+    }
+    .slider-arrow {
+        width: 35px;
+        height: 35px;
+        font-size: 1.2em;
+    }
+    .widget-title {
+        font-size: 2em;
+    }
+}
+
+@media (max-width: 768px) {
+    .review-card {
+        width: 250px; /* Slightly smaller cards */
+        padding: 15px;
+    }
+    .widget-title {
+        font-size: 1.8em;
+    }
+    .left-arrow {
+        left: 5px;
+    }
+    .right-arrow {
+        right: 5px;
+    }
+    .reviews-container {
+        padding-bottom: 5px;
+    }
+    .review-popup {
+        width: 95%;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .shopify-reviews-widget {
+        padding: 15px 0;
+    }
+    .widget-title {
+        font-size: 1.5em;
+        margin-bottom: 20px;
+    }
+    .reviews-carousel {
+        padding: 0 10px;
+    }
+    .review-card {
+        width: 200px; /* Even smaller cards for mobile */
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    .reviewer-img {
+        width: 40px;
+        height: 40px;
+    }
+    .reviewer-name {
+        font-size: 1em;
+    }
+    .review-date {
+        font-size: 0.8em;
+    }
+    .rating-stars .star {
+        font-size: 1em;
+    }
+    .review-content {
+        font-size: 0.85em;
+    }
+    .slider-arrow {
+        width: 30px;
+        height: 30px;
+        font-size: 1em;
+    }
+    .popup-close-btn {
+        font-size: 1.5em;
+        top: 10px;
+        right: 10px;
+    }
+    .review-popup {
+        padding: 15px;
+    }
+}
