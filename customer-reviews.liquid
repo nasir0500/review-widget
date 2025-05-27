@@ -3,13 +3,13 @@
 <style>
   .customer-reviews-section {
       padding: 40px 0;
-      background-color: transparent; /* Overall widget background transparent */
+      background-color: {{ section.settings.sec_bg_color }}; /* Overall widget background transparent */
     }
 
   .customer-reviews-section h2 {
       text-align: center;
       font-size: 2.5em;
-      color: #333; /* Default heading color, can be adjusted */
+      color: {{section.settings.header_text_color}}; /* Default heading color, can be adjusted */
       margin-bottom: 40px;
     }
 
@@ -521,15 +521,27 @@
   "settings": [
     {
       "type": "color",
+      "id": "sec_bg_color",
+      "label": "Section background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
       "id": "content_bg_color",
       "label": "Content background color",
       "default": "#ffffff"
     },
     {
       "type": "color",
+      "id": "header_text_color",
+      "label": "Header Color",
+      "default": "#2E2E2E"
+    },
+    {
+      "type": "color",
       "id": "text_color",
       "label": "Text color",
-      "default": "#333333"
+      "default": "#2E2E2E"
     },
     {
       "type": "color",
