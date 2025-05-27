@@ -1,0 +1,642 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+
+<style>
+  .customer-reviews-section {
+      padding: 40px 0;
+      background-color: transparent; /* Overall widget background transparent */
+    }
+
+  .customer-reviews-section h2 {
+      text-align: center;
+      font-size: 2.5em;
+      color: #333; /* Default heading color, can be adjusted */
+      margin-bottom: 40px;
+    }
+
+  .splide__track {
+      padding: 10px 0; /* Add some vertical padding for shadow */
+    }
+
+  .review-card {
+      background-color: {{ section.settings.content_bg_color }};
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      text-align: left;
+      height: 100%; /* Ensure cards have consistent height */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-sizing: border-box; /* Include padding in height calculation */
+    }
+
+  .reviewer-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+  .reviewer-image {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 15px;
+    }
+
+  .reviewer-info h3 {
+      margin: 0;
+      font-size: 1.2em;
+      color: {{ section.settings.text_color }};
+      display: flex;
+      align-items: center;
+    }
+
+  .reviewer-info span {
+      display: block;
+      font-size: 0.85em;
+      color: #888; /* Date color */
+      margin-top: 2px;
+    }
+
+  .verified-mark {
+      margin-left: 8px;
+      width: 18px;
+      height: 18px;
+      fill: {{ section.settings.link_color }};
+    }
+
+  .stars {
+      margin-bottom: 15px;
+      display: flex;
+    }
+
+  .star-icon {
+      width: 20px;
+      height: 20px;
+      fill: {{ section.settings.star_color }};
+      margin-right: 2px;
+    }
+
+  .review-content {
+      font-size: 0.95em;
+      color: {{ section.settings.text_color }};
+      line-height: 1.6;
+      margin-bottom: 15px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 5; /* Approximate lines for 110 characters */
+      -webkit-box-orient: vertical;
+    }
+
+  .read-more {
+      color: {{ section.settings.link_color }};
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+  .read-more:hover {
+      text-decoration: underline;
+    }
+
+    /* Splide Custom Arrows Styling */
+  .splide__arrows {
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      justify-content: space-between;
+      z-index: 1;
+      padding: 0 20px; /* Adjust padding to control how far arrows are from edges */
+      pointer-events: none; /* Allow clicks to pass through to slides if needed */
+    }
+
+  .splide__arrow {
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      pointer-events: auto; /* Re-enable pointer events for the buttons themselves */
+      color: #333; /* Arrow icon color */
+    }
+
+  .splide__arrow:hover {
+      background: rgba(255, 255, 255, 1);
+    }
+
+  .splide__arrow svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+  .splide__arrow--prev {
+      left: 0;
+    }
+
+  .splide__arrow--next {
+      right: 0;
+    }
+
+    /* Modal Styles */
+  .review-modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1000; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+      justify-content: center;
+      align-items: center;
+    }
+
+  .review-modal.open {
+      display: flex;
+    }
+
+  .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 30px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      position: relative;
+      max-height: 90vh; /* Max height for scrollable content */
+      overflow-y: auto; /* Enable scrolling for modal content */
+    }
+
+  .modal-close {
+      color: #aaa;
+      position: absolute;
+      top: 15px;
+      right: 25px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+  .modal-close:hover,
+  .modal-close:focus {
+      color: #000;
+      text-decoration: none;
+    }
+
+  .modal-reviewer-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+  .modal-reviewer-image {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 20px;
+    }
+
+  .modal-reviewer-info h3 {
+      margin: 0;
+      font-size: 1.4em;
+      color: {{ section.settings.text_color }};
+      display: flex;
+      align-items: center;
+    }
+
+  .modal-reviewer-info span {
+      display: block;
+      font-size: 0.9em;
+      color: #888;
+      margin-top: 5px;
+    }
+
+  .modal-stars {
+      margin-bottom: 20px;
+      display: flex;
+    }
+
+  .modal-review-text {
+      font-size: 1em;
+      color: {{ section.settings.text_color }};
+      line-height: 1.7;
+    }
+
+    /* Responsive adjustments for Splide */
+    @media (max-width: 991px) {
+   .splide__arrows {
+        padding: 0 10px;
+      }
+   .splide__arrow {
+        width: 35px;
+        height: 35px;
+      }
+   .splide__arrow svg {
+        width: 16px;
+        height: 16px;
+      }
+    }
+
+    @media (max-width: 767px) {
+   .customer-reviews-section {
+        padding: 30px 0;
+      }
+   .customer-reviews-section h2 {
+        font-size: 2em;
+        margin-bottom: 30px;
+      }
+   .review-card {
+        padding: 20px;
+      }
+   .reviewer-image {
+        width: 50px;
+        height: 50px;
+        margin-right: 10px;
+      }
+   .reviewer-info h3 {
+        font-size: 1.1em;
+      }
+   .star-icon {
+        width: 18px;
+        height: 18px;
+      }
+   .review-content {
+        font-size: 0.9em;
+      }
+   .splide__arrows {
+        padding: 0 5px;
+      }
+   .splide__arrow {
+        width: 30px;
+        height: 30px;
+      }
+   .splide__arrow svg {
+        width: 14px;
+        height: 14px;
+      }
+   .modal-content {
+        width: 95%;
+        padding: 20px;
+      }
+   .modal-reviewer-image {
+        width: 60px;
+        height: 60px;
+      }
+   .modal-reviewer-info h3 {
+        font-size: 1.2em;
+      }
+   .modal-review-text {
+        font-size: 0.95em;
+      }
+    }
+</style>
+
+<div class="customer-reviews-section" {{ section.shopify_attributes }}>
+  <h2>What our clients say</h2>
+
+  <div class="splide" role="group" aria-label="Customer Reviews Slider">
+    <div class="splide__track">
+      <ul class="splide__list">
+        {% for block in section.blocks %}
+          <li class="splide__slide" {{ block.shopify_attributes }}>
+            <div class="review-card">
+              <div>
+                <div class="reviewer-header">
+                  {% if block.settings.reviewer_image != blank %}
+                    <img
+                      src="{{ block.settings.reviewer_image | image_url: width: 120 }}"
+                      alt="{{ block.settings.reviewer_name }}'s profile picture"
+                      class="reviewer-image"
+                      loading="lazy"
+                    >
+                  {% else %}
+                    <svg class="reviewer-image" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ccc">
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                  {% endif %}
+                  <div class="reviewer-info">
+                    <h3>
+                      {{ block.settings.reviewer_name }}
+                      {% if block.settings.verified_mark %}
+                        <svg class="verified-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                      {% endif %}
+                    </h3>
+                    <span>{{ block.settings.review_date }}</span>
+                  </div>
+                </div>
+
+                <div class="stars">
+                  {% assign rating = block.settings.star_rating | plus: 0 %}
+                  {% for i in (1..5) %}
+                    <svg class="star-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      {% if i <= rating %}
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                      {% else %}
+                        <path d="M22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27 18.18 21l-1.64-7.03L22 9.24zM12 15.4l-3.76 2.27 1-4.28-3.32-2.88 4.38-.38L12 6.1l1.72 4.07 4.38.38-3.32 2.88 1 4.28L12 15.4z"/>
+                      {% endif %}
+                    </svg>
+                  {% endfor %}
+                </div>
+
+                <p class="review-content" data-full-review="{{ block.settings.review_content | escape }}">
+                  {{ block.settings.review_content }}
+                </p>
+                <a href="#" class="read-more" data-modal-target="review-modal-{{ block.id }}">Read more</a>
+              </div>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div id="review-modal" class="review-modal">
+  <div class="modal-content">
+    <span class="modal-close">&times;</span>
+    <div class="modal-reviewer-header">
+      <img src="" alt="" class="modal-reviewer-image">
+      <div class="modal-reviewer-info">
+        <h3>
+          <span class="modal-reviewer-name"></span>
+          <svg class="verified-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        </h3>
+        <span class="modal-review-date"></span>
+      </div>
+    </div>
+    <div class="modal-stars stars"></div>
+    <p class="modal-review-text"></p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+<script>
+  function initReviewsSlider() {
+    const splideElement = document.querySelector('.splide');
+    if (splideElement) {
+      // Destroy existing Splide instance if it exists to prevent re-initialization issues in editor
+      if (splideElement.splide) {
+        splideElement.splide.destroy();
+      }
+
+      const slidesDesktop = {{ section.settings.slides_desktop }};
+      const slidesTablet = {{ section.settings.slides_tablet }};
+      const slidesMobile = {{ section.settings.slides_mobile }};
+      const enableArrows = {{ section.settings.enable_arrows }};
+
+      const splide = new Splide(splideElement, {
+        type: 'loop',
+        perPage: slidesDesktop,
+        gap: '20px',
+        arrows: enableArrows,
+        pagination: false, // You can enable pagination if desired
+        breakpoints: {
+          991: { // Tablet breakpoint
+            perPage: slidesTablet,
+            gap: '15px',
+          },
+          767: { // Mobile breakpoint
+            perPage: slidesMobile,
+            gap: '10px',
+          },
+        },
+      });
+      splide.mount();
+      splideElement.splide = splide; // Store instance for later destruction
+    }
+  }
+
+  function setupReviewTruncationAndModals() {
+    const reviewModal = document.getElementById('review-modal');
+    const modalCloseBtn = reviewModal.querySelector('.modal-close');
+
+    // Get all review cards within the slider
+    const reviewCards = document.querySelectorAll('.splide__slide'); // Target splide__slide directly
+
+    reviewCards.forEach(reviewSlide => { // Iterate over each slide
+      const reviewCard = reviewSlide.querySelector('.review-card'); // Get the review card inside the slide
+      if (!reviewCard) return; // Skip if no review card found
+
+      const contentElement = reviewCard.querySelector('.review-content');
+      const readMoreLink = reviewCard.querySelector('.read-more');
+      const fullText = contentElement.dataset.fullReview;
+
+      if (fullText.length > 110) {
+        contentElement.textContent = fullText.substring(0, 110) + '...';
+        readMoreLink.style.display = 'inline-block'; // Show "Read more"
+      } else {
+        contentElement.textContent = fullText;
+        readMoreLink.style.display = 'none'; // Hide "Read more"
+      }
+
+      // Open modal
+      readMoreLink.onclick = function(e) {
+        e.preventDefault();
+        const reviewerImageElement = reviewCard.querySelector('.reviewer-image');
+        const reviewerImageSrc = reviewerImageElement? reviewerImageElement.src : '';
+        const reviewerName = reviewCard.querySelector('.reviewer-info h3').textContent.replace(/\s*<svg.*<\/svg>\s*/, ''); // Remove SVG text
+        const reviewDate = reviewCard.querySelector('.reviewer-info span').textContent;
+        const starRatingHTML = reviewCard.querySelector('.stars').innerHTML;
+        const cardVerifiedMarkElement = reviewCard.querySelector('.verified-mark');
+        const verifiedMarkVisible = cardVerifiedMarkElement? window.getComputedStyle(cardVerifiedMarkElement).display!== 'none' : false;
+
+        reviewModal.querySelector('.modal-reviewer-image').src = reviewerImageSrc;
+        reviewModal.querySelector('.modal-reviewer-image').alt = reviewerName + "'s profile picture";
+        reviewModal.querySelector('.modal-reviewer-name').textContent = reviewerName;
+        reviewModal.querySelector('.modal-review-date').textContent = reviewDate;
+        reviewModal.querySelector('.modal-review-text').textContent = fullText; // Use fullText here
+        reviewModal.querySelector('.modal-stars').innerHTML = starRatingHTML;
+
+        const modalVerifiedMark = reviewModal.querySelector('.modal-reviewer-info.verified-mark'); // Corrected selector
+        if (modalVerifiedMark) {
+          modalVerifiedMark.style.display = verifiedMarkVisible? 'inline-block' : 'none';
+        }
+
+        reviewModal.classList.add('open');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling on body
+      };
+    });
+
+    // Close modal
+    modalCloseBtn.onclick = function() {
+      reviewModal.classList.remove('open');
+      document.body.style.overflow = ''; // Restore scrolling on body
+    };
+
+    window.onclick = function(event) {
+      if (event.target == reviewModal) {
+        reviewModal.classList.remove('open');
+        document.body.style.overflow = ''; // Restore scrolling on body
+      }
+    };
+  }
+
+  // Initialize on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    initReviewsSlider();
+    setupReviewTruncationAndModals();
+  });
+
+  // Re-initialize for theme editor
+  if (typeof Shopify!== 'undefined' && Shopify.designMode) {
+    document.addEventListener('shopify:section:load', function(event) {
+      if (event.detail.sectionId === '{{ section.id }}') {
+        initReviewsSlider();
+        setupReviewTruncationAndModals();
+      }
+    });
+    document.addEventListener('shopify:block:load', function(event) {
+      // Re-initialize the slider and truncation for the entire section
+      // when a block is loaded/added/updated within this section.
+      if (event.detail.sectionId === '{{ section.id }}') {
+        initReviewsSlider();
+        setupReviewTruncationAndModals();
+      }
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Custom Review Widget",
+  "settings": [
+    {
+      "type": "color",
+      "id": "content_bg_color",
+      "label": "Content background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Link color",
+      "default": "#007ace"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star color",
+      "default": "#f5c518"
+    },
+    {
+      "type": "range",
+      "id": "slides_desktop",
+      "label": "Slides on desktop",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "slides_tablet",
+      "label": "Slides on tablet",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "slides_mobile",
+      "label": "Slides on mobile",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_arrows",
+      "label": "Show navigation arrows",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "Review",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "reviewer_image",
+          "label": "Reviewer image"
+        },
+        {
+          "type": "text",
+          "id": "reviewer_name",
+          "label": "Reviewer name"
+        },
+        {
+          "type": "checkbox",
+          "id": "verified_mark",
+          "label": "Show verified mark",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "review_date",
+          "label": "Review date"
+        },
+        {
+          "type": "range",
+          "id": "star_rating",
+          "label": "Star rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "review_content",
+          "label": "Review content"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 10,
+  "presets": [
+    {
+      "name": "Custom Review Widget",
+      "category": "Testimonials",
+      "blocks": [
+        {
+          "type": "review"
+        },
+        {
+          "type": "review"
+        },
+        {
+          "type": "review"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
